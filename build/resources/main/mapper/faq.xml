@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- writer: 이현서 -->
+<mapper namespace="com.dodam.hotel.repository.interfaces.FAQRepository">
+    <select id="findAllFAQ" resultType="com.dodam.hotel.repository.model.FAQ">
+        select * from faq_tb;
+    </select>
+    <select id="findFAQById" resultType="com.dodam.hotel.repository.model.FAQ">
+        select * from faq_tb where id = #{id};
+    </select>
+    <insert id="insertFAQ">
+        insert into faq_tb(title, content)
+        values (#{title}, #{content})
+    </insert>
+    <update id="updateFAQById">
+        update faq_tb
+        set title = #{title},
+            content = #{content}
+        where id = #{id}
+    </update>
+    <delete id="deleteFAQById">
+        delete from faq_tb where id=#{id};
+    </delete>
+</mapper>

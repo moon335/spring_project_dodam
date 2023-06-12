@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodam.hotel.repository.interfaces.ManagerRepository">
+ 
+	<select id="findByManagernameAndPassword" resultType="com.dodam.hotel.repository.model.Manager">
+		select * from manager_tb
+		where username = #{username} and password = #{password};
+	</select>
+	
+	<insert id="insert">
+		insert into manager_tb(username,password)
+		values	(#{username},#{password});
+	</insert>
+	
+</mapper>

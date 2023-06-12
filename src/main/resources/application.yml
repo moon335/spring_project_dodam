@@ -1,0 +1,84 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+  mvc:
+    view:
+      prefix: /WEB-INF/view
+      suffix: .jsp
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.0.84:3306/dodam?serverTimezone=Asia/Seoul
+    username: dodam
+    password: dodam1234
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ww516079@gmail.com
+    password: twxsuigcdadqnfon
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+            
+# smtp.naver.com
+#  jpa:
+#    open-in-view: true
+#    hibernate:
+#      ddl-auto: update
+#      naming:
+#        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+#      #       physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+#      use-new-id-generator-mappings: true
+#    show-sql: true
+#
+#    properties:
+#      hibernate:
+#        format_sql: true
+#
+#    database: mysql
+
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+      #       physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      use-new-id-generator-mappings: true
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+    database: mysql
+
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+      
+mybatis:
+  mapper-locations:
+  - classpath:mapper/**.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    
+dodam:
+  key: 66994394110D65D9E0AA492AFEC1D4B8FBAFD613A512BBC7196B6A05BE595D2C

@@ -1,0 +1,45 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.PointRepository">
+
+	<!-- 포인트 등록 -->
+	<insert id="insertZeroPoint">
+		INSERT INTO point_info_tb (user_id)
+		VALUES (#{userId});
+	</insert>
+
+	<insert id="insertPoint">
+		INSERT INTO point_info_tb (point, user_id, end_date)
+		VALUES (#{point}, #{userId}, curdate() + INTERVAL 1 YEAR);
+	</insert>
+
+	<resultMap type="com.dodam.hotel.repository.model.Point" id="Point">
+		<result column="id" property="id" />
+		<result column="point" property="point" />
+		<result column="end_date" property="endDate" />
+		<collection property="user" resultMap="User"></collection>
+	</resultMap>
+
+	<resultMap type="com.dodam.hotel.repository.model.User" id="User">
+		<result column="id" property="id" />
+		<result column="email" property="email" />
+		<result column="password" property="password" />
+		<result column="name" property="name" />
+		<result column="gender" property="gender" />
+		<result column="birth" property="birth" />
+		<result column="tel" property="tel" />
+		<result column="blacklist" property="blacklist" />
+		<result column="withdrawal" property="withdrawal" />
+		<result column="created_at" property="createdAt" />
+	</resultMap>
+
+	<!-- 특정 회원 포인트 조회 -->
+	<select id="findByUserId" resultType="int">
+		select sum(point)
+		from point_info_tb
+		where
+		user_id = #{userId}
+	</select>
+
+</mapper> 

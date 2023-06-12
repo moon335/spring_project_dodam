@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dodam.hotel.repository.interfaces.ReplyRepository">
+
+
+	<insert id="insert">
+		insert into reply_tb(content,question_id,manager_id)
+		values(#{content},#{questionId},#{managerId});
+	</insert>
+
+	<delete id="deleteReply">
+		delete from reply_tb
+    	where question_id = #{questionId};
+	</delete>
+	
+</mapper>

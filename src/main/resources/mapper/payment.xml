@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- writer: 이현서 -->
+<mapper namespace="com.dodam.hotel.repository.interfaces.SinglePaymentRepository">
+    <!-- select -->
+    <select id="findReservationCancelByReservationId" resultType="com.dodam.hotel.repository.model.ReservationCancel">
+        select * from reserv_cacel_tb
+        where reservation_id = #{reservationId};
+    </select>
+    <!-- insert  -->
+    <insert id="createPayment">
+        insert into single_payment_tb(pay_tid, price, target_reservation_id, pg_type)
+        values (#{tid}, #{price}, #{reservationId}, #{pgType})
+    </insert>
+    <insert id="createRefund">
+        insert into refund_tb(reserv_cancel_id, price)
+        values(#{reservationCancelId}, #{price})
+    </insert>
+    <insert id="createReservCancel">
+        insert into reserv_cancel_tb(reservation_id, description)
+        values(#{reservationId}, #{description})
+    </insert>
+</mapper>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodam.hotel.repository.interfaces.QuestionRepository">
+	
+	<resultMap type="com.dodam.hotel.repository.model.FAQ" id="Faq">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+	</resultMap>
+
+	<resultMap type="com.dodam.hotel.repository.model.Question" id="Question">
+		<result column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="q_content" property="content"/>
+		<result column="created_at" property="createdAt"/>
+		<result column="category" property="category"/>
+		<result column="origin_file" property="originFile"/>
+		<result column="upload_file" property="uploadFile"/>
+		<result column="status" property="status"/>
+		<result column="user_id" property="userId"/>
+		<collection property="user" resultMap="User"></collection>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.User" id="User">
+		<result column="id" property="id"/>
+		<result column="email" property="email"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="gender" property="gender"/>
+		<result column="birth" property="birth"/>
+		<result column="tel" property="tel"/>
+		<result column="blacklist" property="blacklist"/>
+		<result column="withdrawal" property="withdrawal"/>
+		<result column="created_at" property="createdAt"/>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Reply" id="Reply">
+		<result column="id" property="id"/>
+		<result column="r_content" property="content"/>
+		<result column="question_id" property="questionId"/>
+		<result column="manager_id" property="managerId"/>
+		<collection property="question" resultMap="Question"></collection>
+		<collection property="manager" resultMap="Manager"></collection>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Manager" id="Manager">
+		<result column="id" property="id"/>
+		<result column="username" property="username"/>
+		<result column="password" property="password"/>
+	</resultMap>
+	
+	<!-- 문의, 건의 등록 -->
+	<insert id="insertQuestion">
+		insert into question_tb(title, content, user_id, category, upload_file, origin_file)
+		values
+			(#{title}, #{content}, #{userId}, #{category}, #{uploadFile}, #{originFile});
+	</insert>
+	
+	<!-- 특정 유저가 한 문의, 답변 조회 -->
+	<select id="findQuestionByUserId" resultMap="Reply">
+		select q.title, q.content as q_content, r.content as r_content, q.created_at, q.upload_file as upload_file
+		from question_tb as q
+		inner join user_tb as u
+		on q.user_id = u.id
+		left join reply_tb as r
+        on r.question_id = q.id
+		where user_id = #{userId}
+	</select>
+	
+	<select id="findByUserIdPaging" resultMap="Reply">
+		SELECT *
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+	        FROM (
+				select q.title, q.content as q_content, r.content as r_content, q.created_at, q.upload_file as upload_file
+				from question_tb as q
+				inner join user_tb as u
+				on q.user_id = u.id
+				left join reply_tb as r
+				on r.question_id = q.id
+				where q.user_id = #{userId}
+	            ORDER BY q.id DESC
+	            ) A, 
+	        (SELECT @ROWNUM := 0 ) B
+	        ) as C
+		where C.ROWNUM BETWEEN #{obj.start} AND #{obj.end}
+	</select>
+	
+	<select id="findByUserIdCount" resultType="int">
+		select count(*) from question_tb where user_id = #{userId}
+	</select>
+	
+	<select id="findByStatusCount" resultType="int">
+		select count(*) from question_tb
+		where status = 0;
+	</select>
+	
+	<select id="findAll" resultMap="Reply">
+		select r.content,r.manager_id, q.*
+		from reply_tb as r
+		join question_tb as q
+		on q.id = r.question_id
+		where question_id = #{id};
+	</select>
+	
+	<select id="findAllQuestionCount" resultType="int">
+		select count(*)
+		from question_tb
+	</select>
+	
+	<select id="findAllQuestion" resultType="com.dodam.hotel.repository.model.Question">
+		SELECT *
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+	        FROM (
+				select *
+				from question_tb
+	            ORDER BY id DESC
+	            ) A, 
+	        (SELECT @ROWNUM := 0 ) B
+	        ) as C
+		where C.ROWNUM BETWEEN #{start} AND #{end}
+	</select>
+	
+	<select id="findById" resultType="com.dodam.hotel.repository.model.Question">
+		select *
+		from question_tb
+		where id = #{id};
+	</select>
+
+	<select id="findByCategory" resultType="com.dodam.hotel.repository.model.Question">
+		select *
+		from question_tb
+		where category = #{category};
+	</select>
+	
+	<update id="updateById">
+		UPDATE question_tb
+        SET status = true 
+        WHERE id=#{id};
+	</update>
+	
+	<delete id="deleteQuestion">
+		delete from question_tb
+    		where id = #{questionId};
+	</delete>
+	
+	<select id="findAllFaq" resultMap="Faq">
+		select *
+		from faq_tb
+	</select>
+	
+	
+</mapper>

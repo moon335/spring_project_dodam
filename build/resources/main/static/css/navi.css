@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+@import
+	url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Gothic+Coding&family=Noto+Sans+KR:wght@300;400&display=swap')
+	;
+
+* {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+.body--container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+}
+
+.navi--bar {
+	display: flex;
+	justify-content: space-between;
+	font-size: 20px;
+	align-items: center;
+	width: 1000px;
+	height: 70px;
+}
+.title--box {
+	font-size: 30px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.main--container {
+	width: 1800px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0 auto;
+}
+
+.info--outline {
+	display: flex;
+	justify-content: flex-end;
+	width: 1000px;
+}
+
+.info--container {
+	width: 1000px;
+}
+
+.desc--box--3 {
+	display: flex;
+	flex-direction: column;
+	width: 1000px;
+	margin-top: 20px;
+}
+a {
+	text-decoration: none;
+	color: black;
+}
+a:hover {
+	color: black;
+}
+.detail--container {
+	display: flex;
+	justify-content: flex-end;
+	flex: 1;
+}
+.detail--box {
+	margin-left: 10px;
+	cursor: pointer;
+}
+.detail--box > a {
+	text-decoration: none;
+}
+.detail--box:hover {
+	color: #FF9F8D;
+}
+.desc--box {
+	display: flex;
+	align-items: center;
+	margin-left: 30px;
+}
+.desc--box--2 {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 30px;
+	width: 1000px;
+}
+.info--title {
+	font-weight: bold;
+	font-size: 20px;
+	margin-bottom: 10px;
+}
+.info--content > p {
+	margin: 10px;
+}
+.info--title--desc {
+	font-weight: bold;
+	font-size: 17px;
+	width: 900px;
+}
+.selected--menu {
+	font-weight: bold; 
+}
+
+.selected--menu > a {
+	color: #FF9F8D;
+}
+
+.color--toggle {
+	color: #FF9F8D;
+	font-weight: bolder;
+}

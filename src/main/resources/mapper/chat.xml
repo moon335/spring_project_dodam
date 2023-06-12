@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+        namespace="com.dodam.hotel.repository.interfaces.ChatRepository">
+    <!-- writer: 이현서 -->
+    <insert id="insertChat">
+        insert into chat_tb(target_user_id, msg, chat_role)
+        values(#{targetUserId}, #{msg}, #{role});
+    </insert>
+    
+    <insert id="insertManagerChat">
+        insert into chat_tb(target_user_id, msg, chat_role, is_read)
+        values(#{targetUserId}, #{msg}, #{role}, 1);
+    </insert>
+    
+    <update id="updateUserMessageStatus">
+    	update chat_tb
+		set is_read = 1
+		where target_user_id = #{targetUserId};
+    </update>
+    
+    <select id="findNewMessage" resultType="Integer">
+    	select count(*)
+    	from chat_tb
+    	where is_read = 0;
+    </select>
+
+</mapper>

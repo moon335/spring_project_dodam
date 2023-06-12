@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.dodam.hotel.repository.interfaces.MUserRepository">
+	
+	<select id="findByNamePaging" resultType="com.dodam.hotel.repository.model.MUser">		
+		SELECT * from (
+		 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+		        FROM
+		        (select * from user_tb
+	        	where name = #{name} 
+	        	and withdrawal = 0 ORDER BY name) A, 
+		        (SELECT @ROWNUM := 0 ) B
+		        ) as C
+		        where C.ROWNUM BETWEEN #{obj.start} AND #{obj.end};
+		
+	</select>
+	
+	<select id="findByName" resultType="com.dodam.hotel.repository.model.MUser">		
+		select * from user_tb
+	        	where name = #{name} 
+	        	and withdrawal = 0 
+
+	</select>
+
+	<select id="findByNameCount" resultType="int" >
+		select count(*) from user_tb
+		where name = #{name} and withdrawal = 0;
+	</select>
+	
+	<select id="findByAllPaging" resultType="com.dodam.hotel.repository.model.MUser">
+		
+		SELECT * from (
+		 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+		        FROM
+		        (select * from user_tb
+				where withdrawal = 0 ORDER BY name) A, 
+		        (SELECT @ROWNUM := 0 ) B
+		        ) as C
+		        where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+
+	<select id="findByAll" resultType="com.dodam.hotel.repository.model.MUser">
+		        select * from user_tb
+				where withdrawal = 0; 
+	</select>
+	
+	<select id="findByAllCount" resultType="Integer">
+		select count(*) from user_tb
+		where withdrawal = 0;
+	</select>
+	
+	<select id="findByBlackList" resultType="com.dodam.hotel.repository.model.MUser">	
+		SELECT * from (
+		 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+		        FROM
+		        (select * from user_tb
+				where blacklist = 1 ORDER BY name) A, 
+		        (SELECT @ROWNUM := 0 ) B
+		        ) as C
+		        where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+
+	<select id="findByBlackListCount" resultType="Integer">
+		select count(*) from user_tb
+		where blacklist = 1;
+	</select>
+	
+	<delete id="deleteBlackList">
+		DELETE FROM user_tb
+		WHERE id = #{id};
+	</delete>
+	
+	<update id="updateGrade">
+		update grade_info_tb set grade_id = #{gradeId} where user_id = #{id};	
+	</update>
+	
+	<update id="updateBlackList">
+		update user_tb set blackList = 1 where id = #{id};
+	</update>
+
+	<update id="updateWhiteList">
+		update user_tb set blackList = 0 where id = #{id};
+	</update>
+	
+	<update id="updateWithdrawal">
+		update user_tb set withdrawal = 1 where id = #{id}; 
+	</update>
+	
+	<update id="updateOriginEmail">
+		update user_tb set origin_email = #{email} where id = #{id}; 
+	</update>
+	
+	<update id="updateWithdrawalEmail">
+		update user_tb set email = #{email} where id = #{id};
+	</update>
+	
+	<select id="findByUserId" resultMap="GradeInfo">
+		select 
+		gif.*,
+		u.*,
+		g.*,
+		g.name as g_name
+		from grade_info_tb as gif
+		join user_tb as u
+		on u.id = gif.user_id
+		join grade_tb as g
+		on gif.grade_id = g.id
+		where gif.user_id = #{id};
+	</select>
+	
+	<select id="findByGradeAll" resultMap="GradeInfo">
+		SELECT * from (
+		 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+		        FROM
+		        (select 
+					gif.*,
+					u.*,
+					g.id as g_id,g.name as g_name,g.description as description
+					from grade_info_tb as gif
+					join user_tb as u
+					on u.id = gif.user_id
+					join grade_tb as g
+					on gif.grade_id = g.id
+					where gif.grade_id = #{gradeId} and withdrawal = 0 ORDER BY u.name) A, 
+		        (SELECT @ROWNUM := 0 ) B
+		        ) as C
+		        where C.ROWNUM BETWEEN #{obj.start} AND #{obj.end};
+	</select>
+	
+	<select id="findByGradeAllCount" resultType="int">
+					select
+					count(*) 
+					from grade_info_tb as gif
+					join user_tb as u
+					on u.id = gif.user_id
+					join grade_tb as g
+					on gif.grade_id = g.id
+					where gif.grade_id = #{gradeId} and withdrawal = 0
+	</select>
+	
+	<select id="findByMembershipAll" resultMap="MembershipInfo">
+		SELECT * from (
+		 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+		        FROM
+		        (select 
+					mif.*,
+					u.*,
+					m.id as m_id, m.price as price
+					from membership_info_tb as mif
+					join user_tb as u
+					on u.id = mif.user_id
+					join membership_tb as m
+					on mif.membership_id = m.id
+					where withdrawal = 0 ORDER BY u.name) A, 
+		        (SELECT @ROWNUM := 0 ) B
+		        ) as C
+		        where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+	
+	<select id="findByMembershipAllCount" resultType="Integer">
+		select 
+		count(*)
+		from membership_info_tb as mif
+		join user_tb as u
+		on u.id = mif.user_id
+		join membership_tb as m
+		on mif.membership_id = m.id
+		where withdrawal = 0;
+	</select>
+	
+	<!-- 유저 등급 조회 조인문 맵 설정 -->
+	<resultMap type="com.dodam.hotel.repository.model.GradeInfo" id="GradeInfo">
+		<result column="user_id" property="userId"/>
+		<result column="grade_id" property="gradeId"/>
+		<result column="update_at" property="updateAt"/>
+		<collection property="grade"  resultMap="Grade"/>
+		<collection property="user" resultMap="MUser"/>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Grade" id="Grade">
+			<result column="g_id" property="id"/>
+			<result column="g_name" property="name"/>
+			<result column="description" property="description"/>	
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.User" id="MUser">
+		<result column="id" property="id"/>
+		<result column="email" property="email"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="gender" property="gender"/>
+		<result column="tel" property="tel"/>
+		<result column="birth" property="birth"/>
+		<result column="blacklist" property="blacklist"/>
+		<result column="withdrawal" property="withdrawal"/>
+		<result column="created_at" property="createdAt"/>
+	</resultMap>
+	<!-- 맴버쉽 조회 -->
+	<resultMap type="com.dodam.hotel.repository.model.MembershipInfo" id="MembershipInfo">
+		<result column="user_id" property="userId"/>
+		<result column="membershipInfo_id" property="membershipInfoId"/>
+		<result column="updated_at" property="updatedAt"/>
+		<collection property="user" resultMap="User"></collection>
+		<collection property="membership" resultMap="Membership"></collection>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Membership" id="Membership">
+		<result column="m_id" property="id"/>
+		<result column="price" property="price"/>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.User" id="User">
+		<result column="id" property="id"/>
+		<result column="email" property="email"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="gender" property="gender"/>
+		<result column="tel" property="tel"/>
+		<result column="birth" property="birth"/>
+		<result column="blacklist" property="blacklist"/>
+		<result column="withdrawal" property="withdrawal"/>
+		<result column="created_at" property="createdAt"/>
+	</resultMap>
+
+</mapper>

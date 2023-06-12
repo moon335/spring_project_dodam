@@ -1,0 +1,822 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodam.hotel.repository.interfaces.ReservationRepository">
+
+	<!-- 피트니스 -->
+	<resultMap type="com.dodam.hotel.repository.model.Fitness" id="Fitness">
+		<result column="fitness_id" property="id" />
+		<result column="fitness_availability" property="availability" />
+		<result column="fitness_hours" property="hours" />
+		<result column="fitness_price" property="price" />
+		<result column="fitness_status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc" resultMap="FacilitiesDesc" />
+	</resultMap>
+
+	<resultMap type="com.dodam.hotel.repository.model.Facilities" id="Facilities">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="location" property="location" />
+		<result column="image1" property="image1" />
+		<result column="image2" property="image2" />
+		<result column="image3" property="image3" />
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.FacilitiesDesc" id="FacilitiesDesc">
+		<result column="id" property="id" />
+		<result column="title_desc" property="titleDesc" />
+		<result column="content_desc1" property="contentDesc1" />
+		<result column="content_desc2" property="contentDesc2" />
+		<result column="content_desc3" property="contentDesc3" />
+		<result column="content_desc4" property="contentDesc4" />
+		<result column="content_desc5" property="contentDesc5" />
+		<result column="content_desc6" property="contentDesc6" />
+		<result column="content_desc7" property="contentDesc7" />
+		<result column="content_desc8" property="contentDesc8" />
+		<result column="content_desc9" property="contentDesc9" />
+		<result column="content_desc10" property="contentDesc10" />
+		<association property="facilities" resultMap="Facilities"></association>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Reservation" id="Reservation">
+		<result column="r_id" property="id" />
+		<result column="r_start_date" property="startDate" />
+		<result column="r_end_date" property="endDate" />
+		<result column="r_number_of_p" property="numberOfP" />
+		<result column="r_created_at" property="createdAt" />
+		<result column="r_total_price" property="totalPrice" />
+		<result column="r_pay_tid" property="payTid" />
+		<result column="r_fitness_id" property="fitnessId" />
+		<result column="r_pool_id" property="poolId" />
+		<result column="r_spa_id" property="spaId" />
+		<result column="r_dining_id" property="diningId" />
+		<collection property="user" resultMap="User"></collection>
+		<collection property="room" resultMap="Room"></collection>
+		<collection property="dining" resultMap="Dining"></collection>
+		<collection property="fitness" resultMap="Fitness"></collection>
+		<collection property="pool" resultMap="Pool"></collection>
+		<collection property="spa" resultMap="Spa"></collection>
+	</resultMap>
+	
+	<!-- room -->
+	<resultMap id="Room" type="com.dodam.hotel.repository.model.Room">
+		<result column="room_id" property="id" />
+		<result column="room_availability" property="availability" />
+		<result column="room_status_desc" property="statusDesc" />
+		<collection property="roomType" resultMap="RoomType"></collection>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.RoomType" id="RoomType">
+		<result column="room_type_id" property="id" />
+		<result column="room_type_name" property="name" />
+		<result column="room_type_price" property="price" />
+		<result column="room_type_description" property="description" />
+		<result column="room_type_image" property="image" />
+		<result column="room_type_image2" property="image" />
+		<result column="room_type_image3" property="image" />
+		<result column="room_type_number_of_p" property="numberOfP" />
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Dining" id="Dining">
+		<result column="dining_id" property="id" />
+		<result column="dining_name" property="name" />
+		<result column="dining_hours" property="hours" />
+		<result column="dining_location" property="location" />
+		<result column="dining_availability" property="availability" />
+		<result column="dining_status_desc" property="statusDesc" />
+		<result column="image1" property="image1" />
+		<result column="image2" property="image2" />
+		<result column="image3" property="image3" />
+	</resultMap>
+	
+	<!-- 스파 -->
+	<resultMap type="com.dodam.hotel.repository.model.Spa" id="Spa">
+		<result column="spa_id" property="id" />
+		<result column="spa_availability" property="availability" />
+		<result column="spa_price" property="price" />
+		<result column="spa_hours" property="hours" />
+		<result column="spa_status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc" resultMap="FacilitiesDesc" />
+	</resultMap>
+	
+	<!-- 수영장 -->
+	<resultMap type="com.dodam.hotel.repository.model.Pool" id="Pool">
+		<result column="pool_id" property="id" />
+		<result column="pool_pirce" property="price" />
+		<result column="pool_availability" property="availability" />
+		<result column="pool_hours" property="hours" />
+		<result column="pool_status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc" resultMap="FacilitiesDesc" />
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.User" id="User">
+		<result column="user_id" property="id"/>
+		<result column="email" property="email"/>
+		<result column="password" property="password"/>
+		<result column="user_name" property="name"/>
+		<result column="user_gender" property="gender"/>
+		<result column="birth" property="birth"/>
+		<result column="user_tel" property="tel"/>
+		<result column="user_blacklist" property="blacklist"/>
+		<result column="user_withdrawal" property="withdrawal"/>
+		<result column="created_at" property="createdAt"/>
+	</resultMap>
+
+	<!-- 다이닝 예약 -->
+	<insert id="insertReserveDining">
+		INSERT INTO reservation_tb (start_date, end_date, number_of_p, user_id, dining_id, total_price, pay_tid)
+		VALUES (#{startDate}, #{endDate}, #{numberOfP}, #{userId}, 1, 0, '현장결제')
+	</insert>
+	
+	<!-- 특정 유저 예약정보 페이징 -->
+	<select id="findAllReservationByUserIdPaging" resultMap="Reservation">
+ 		SELECT *
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+        	FROM (
+				select
+				r.id as r_id,
+				r.start_date as r_start_date,
+				r.end_date as r_end_date,
+				r.number_of_p as r_number_of_p,
+				r.created_at as r_created_at,
+				r.total_price as r_total_price,
+				r.pay_tid as r_pay_tid,
+				
+				ro.id as room_id,
+				ro.availability as room_availability,
+				
+				rt.name as room_type_name,
+				rt.price as room_type_price,
+				rt.number_of_p as room_type_number_of_p,
+				
+				d.id as dining_id,
+				d.name as dining_name,
+				
+				s.id as spa_id,
+				s.price as spa_price,
+				
+				po.id as pool_id,
+				po.price as pool_pirce,
+				
+				u.id as user_id,
+				u.name as user_name
+			
+			from reservation_tb as r
+			left join user_tb as u
+			on r.user_id = u.id
+			left join room_tb as ro
+			on r.room_id = ro.id
+			left join dining_tb as d
+			on r.dining_id = d.id
+			left join fitness_tb as f
+			on r.fitness_id = f.id
+			left join pool_tb as po
+			on r.pool_id = po.id
+			left join spa_tb as s
+			on r.spa_id = s.id
+			left join room_type_tb as rt
+			on ro.room_type_id = rt.id
+			where r.user_id = #{userId}
+            ORDER BY r_id DESC
+            ) A, 
+        (SELECT @ROWNUM := 0 ) B
+        ) as C
+		WHERE C.ROWNUM BETWEEN #{obj.start} AND #{obj.end}
+	</select>
+	
+	<!-- 특정 유저 예약 정보 카운트 -->
+	<select id="findAllReservationByUserIdCount" resultType="int">
+		select count(*) from reservation_tb where user_id = #{userId}
+	</select>
+	
+	<!-- 전체 유저 예약정보 페이징 -->
+	<select id="findAllReservationPaging" resultMap="Reservation">
+ 		SELECT *
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+        	FROM (
+				select
+				r.id as r_id,
+				r.start_date as r_start_date,
+				r.end_date as r_end_date,
+				r.number_of_p as r_number_of_p,
+				r.created_at as r_created_at,
+				r.total_price as r_total_price,
+				r.pay_tid as r_pay_tid,
+				
+				ro.id as room_id,
+				ro.availability as room_availability,
+				
+				rt.name as room_type_name,
+				rt.price as room_type_price,
+				rt.number_of_p as room_type_number_of_p,
+				
+				d.id as dining_id,
+				d.name as dining_name,
+				
+				s.id as spa_id,
+				s.price as spa_price,
+				
+				po.id as pool_id,
+				po.price as pool_pirce,
+				
+				u.id as user_id,
+				u.name as user_name
+			
+			from reservation_tb as r
+			left join user_tb as u
+			on r.user_id = u.id
+			left join room_tb as ro
+			on r.room_id = ro.id
+			left join dining_tb as d
+			on r.dining_id = d.id
+			left join fitness_tb as f
+			on r.fitness_id = f.id
+			left join pool_tb as po
+			on r.pool_id = po.id
+			left join spa_tb as s
+			on r.spa_id = s.id
+			left join room_type_tb as rt
+			on ro.room_type_id = rt.id
+            ORDER BY r_id DESC
+            ) A, 
+        (SELECT @ROWNUM := 0 ) B
+        ) as C
+		WHERE C.ROWNUM BETWEEN #{start} AND #{end}
+	</select>
+	
+	<!-- 전체 예약 카운트 -->
+	<select id="findAllReservationCount" resultType="int">
+		select count(*) from reservation_tb
+	</select>
+	
+		<!-- 오늘 예약정보 페이징 -->
+	<select id="findTodayReservationPaging" resultMap="Reservation">
+ 		SELECT *
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+        	FROM (
+				select
+				r.id as r_id,
+				r.start_date as r_start_date,
+				r.end_date as r_end_date,
+				r.number_of_p as r_number_of_p,
+				r.created_at as r_created_at,
+				r.total_price as r_total_price,
+				r.pay_tid as r_pay_tid,
+				
+				ro.id as room_id,
+				ro.availability as room_availability,
+				
+				rt.name as room_type_name,
+				rt.price as room_type_price,
+				rt.number_of_p as room_type_number_of_p,
+				
+				d.id as dining_id,
+				d.name as dining_name,
+				
+				s.id as spa_id,
+				s.price as spa_price,
+				
+				po.id as pool_id,
+				po.price as pool_pirce,
+				
+				u.id as user_id,
+				u.name as user_name
+			
+			from reservation_tb as r
+			left join user_tb as u
+			on r.user_id = u.id
+			left join room_tb as ro
+			on r.room_id = ro.id
+			left join dining_tb as d
+			on r.dining_id = d.id
+			left join fitness_tb as f
+			on r.fitness_id = f.id
+			left join pool_tb as po
+			on r.pool_id = po.id
+			left join spa_tb as s
+			on r.spa_id = s.id
+			left join room_type_tb as rt
+			on ro.room_type_id = rt.id
+			where date_format(start_date, "%Y-%m-%d") = curdate() 
+            ORDER BY r_id DESC
+            ) A, 
+        (SELECT @ROWNUM := 0 ) B
+        ) as C
+		WHERE C.ROWNUM BETWEEN #{start} AND #{end}
+	</select>
+	
+	<!-- 오늘 예약 카운트 -->
+	<select id="findTodayReservationCount" resultType="int">
+		select count(*) from reservation_tb
+		where date_format(start_date, "%Y-%m-%d") = curdate() 
+	</select>
+
+	<!-- 예약확인 -->
+	<select id="findReservationByUserIdSuccessful" resultMap="Reservation">
+		select
+			r.id as r_id,
+			r.start_date as r_start_date,
+			r.end_date as r_end_date,
+			r.number_of_p as r_number_of_p,
+			r.created_at as r_created_at,
+			r.total_price as r_total_price,
+			r.pay_tid as r_pay_tid,
+			r.fitness_id as r_fitness_id,
+				r.spa_id as r_spa_id,
+				r.pool_id as r_pool_id,
+				r.dining_id as r_dining_id,
+			
+			ro.id as room_id,
+			ro.availability as room_availability,
+			
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.number_of_p as room_type_number_of_p,
+			
+			p.id as package_id,
+			p.name as package_name,
+			p.price as package_price,
+			
+			d.id as dining_id,
+			d.name as dining_name,
+			
+			s.id as spa_id,
+			s.price as spa_price,
+			
+			po.id as pool_id,
+			po.price as pool_pirce,
+			
+			u.id as user_id,
+			u.name as user_name
+			
+		from reservation_tb as r
+		left join user_tb as u
+		on r.user_id = u.id
+		left join room_tb as ro
+		on r.room_id = ro.id
+		left join dining_tb as d
+		on r.dining_id = d.id
+		left join package_tb as p
+		on r.package_id = p.id
+		left join fitness_tb as f
+		on r.fitness_id = f.id
+		left join pool_tb as po
+		on r.pool_id = po.id
+		left join spa_tb as s
+		on r.spa_id = s.id
+		left join room_type_tb as rt
+		on ro.room_type_id = rt.id
+		where r.user_id = #{userId}
+		order by r.created_at desc limit 1;
+	</select>
+	
+	<!-- 마이페이지 예약 정보 조회 -->
+	<select id="findAllReservationByUserId" resultMap="Reservation">
+		select
+			r.id as r_id,
+			r.start_date as r_start_date,
+			r.end_date as r_end_date,
+			r.number_of_p as r_number_of_p,
+			r.created_at as r_created_at,
+			r.total_price as r_total_price,
+			r.pay_tid as r_pay_tid,
+			
+			ro.id as room_id,
+			ro.availability as room_availability,
+			
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.number_of_p as room_type_number_of_p,
+			
+			d.id as dining_id,
+			d.name as dining_name,
+			
+			s.id as spa_id,
+			s.price as spa_price,
+			
+			po.id as pool_id,
+			po.price as pool_pirce,
+			
+			u.id as user_id,
+			u.name as user_name
+			
+		from reservation_tb as r
+		left join user_tb as u
+		on r.user_id = u.id
+		left join room_tb as ro
+		on r.room_id = ro.id
+		left join dining_tb as d
+		on r.dining_id = d.id
+		left join fitness_tb as f
+		on r.fitness_id = f.id
+		left join pool_tb as po
+		on r.pool_id = po.id
+		left join spa_tb as s
+		on r.spa_id = s.id
+		left join room_type_tb as rt
+		on ro.room_type_id = rt.id
+		where r.user_id = #{userId}
+		
+	</select>
+	
+	<!-- 특정 유저 전체 예약 조회 (이름) -->
+	<select id="findAllReservationByUserName" resultMap="Reservation">
+		select
+			r.id as r_id,
+			r.start_date as r_start_date,
+			r.end_date as r_end_date,
+			r.number_of_p as r_number_of_p,
+			r.created_at as r_created_at,
+			r.total_price as r_total_price,
+			r.pay_tid as r_pay_tid,
+			
+			ro.id as room_id,
+			ro.availability as room_availability,
+			
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.number_of_p as room_type_number_of_p,
+			
+			d.id as dining_id,
+			d.name as dining_name,
+			
+			s.id as spa_id,
+			s.price as spa_price,
+			
+			po.id as pool_id,
+			po.price as pool_pirce,
+			
+			u.id as user_id,
+			u.name as user_name
+			
+		from reservation_tb as r
+		left join user_tb as u
+		on r.user_id = u.id
+		left join room_tb as ro
+		on r.room_id = ro.id
+		left join dining_tb as d
+		on r.dining_id = d.id
+		left join fitness_tb as f
+		on r.fitness_id = f.id
+		left join pool_tb as po
+		on r.pool_id = po.id
+		left join spa_tb as s
+		on r.spa_id = s.id
+		left join room_type_tb as rt
+		on ro.room_type_id = rt.id
+		where u.name = #{name}
+		
+	</select>
+	
+	<select id="findTodayReservation" resultMap="Reservation">
+        select
+            re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			re.created_at as r_created_at,
+			re.total_price as r_total_price,
+			re.pay_tid as r_pay_tid,
+            
+            u.id as user_id,
+            u.name as user_name,
+            u.gender as user_gender,
+            u.tel as user_tel,
+            u.blacklist as user_blacklist,
+            u.withdrawal as user_withdrawal,
+
+            r.id as room_id,
+            rt.name as room_type_name,
+
+            d.id as dining_id,
+            d.hours as dining_hours,
+            d.name as dining_name,
+
+            f.id as fitness_id,
+            f.hours as fitness_hours,
+            f.availability as fitness_availability,
+            f.status_desc as fitness_status_desc,
+
+            p.id as pool_id,
+            p.hours as pool_hours,
+            p.availability as pool_availability,
+            p.status_desc as pool_status_desc,
+
+            s.id as spa_id,
+            s.hours as spa_hours,
+            s.availability as spa_availability,
+            s.status_desc as spa_status_desc
+
+            from reservation_tb as re
+                left join user_tb as u
+                    on re.user_id = u.id
+                left join room_tb as r
+                    on re.room_id = r.id
+                left join room_type_tb as rt
+                	on r.room_type_id = rt.id
+                left join dining_tb as d
+                    on re.dining_id = d.id
+                left join fitness_tb as f
+                    on re.fitness_id = f.id
+                left join pool_tb as p
+                    on re.pool_id = p.id
+                left join spa_tb as s
+	                  on re.spa_id = s.id
+	        	where
+                date_format(start_date, "%Y-%m-%d") = curdate()
+                order by start_date desc
+
+    </select>
+    
+    <select id="findAllReservation" resultMap="Reservation">
+        select
+            re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			re.created_at as r_created_at,
+			re.total_price as r_total_price,
+			re.pay_tid as r_pay_tid,
+            
+            u.id as user_id,
+            u.name as user_name,
+            u.gender as user_gender,
+            u.tel as user_tel,
+            u.blacklist as user_blacklist,
+            u.withdrawal as user_withdrawal,
+
+            r.id as room_id,
+            rt.name as room_type_name,
+
+            d.id as dining_id,
+            d.hours as dining_hours,
+            d.name as dining_name,
+
+            pack.id as package_id,
+            pack.name as package_name,
+
+            f.id as fitness_id,
+            f.hours as fitness_hours,
+            f.availability as fitness_availability,
+            f.status_desc as fitness_status_desc,
+
+            p.id as pool_id,
+            p.hours as pool_hours,
+            p.availability as pool_availability,
+            p.status_desc as pool_status_desc,
+
+            s.id as spa_id,
+            s.hours as spa_hours,
+            s.availability as spa_availability,
+            s.status_desc as spa_status_desc
+
+            from reservation_tb as re
+                left join user_tb as u
+                    on re.user_id = u.id
+                left join room_tb as r
+                    on re.room_id = r.id
+                left join room_type_tb as rt
+                	on r.room_type_id = rt.id
+                left join dining_tb as d
+                    on re.dining_id = d.id
+                left join package_tb as pack
+                    on re.package_id = pack.id
+                left join fitness_tb as f
+                    on re.fitness_id = f.id
+                left join pool_tb as p
+                    on re.pool_id = p.id
+                left join spa_tb as s
+	                  on re.spa_id = s.id
+	            where u.withdrawal  = false
+                order by start_date desc
+
+    </select>
+	
+	<select id="findReservationByUserId" resultMap="Reservation">
+        select
+            re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			re.created_at as r_created_at,
+			re.total_price as r_total_price,
+			re.pay_tid as r_pay_tid,
+
+            u.id as user_id,
+            u.name as user_name,
+            u.gender as user_gender,
+            u.tel as user_tel,
+            u.blacklist as user_blacklist,
+            u.withdrawal as user_withdrawal,
+
+            r.id as room_id,
+            
+            rt.name as room_type_name,
+
+            d.id as dining_id,
+            d.hours as dining_hours,
+            d.name as dining_name,
+
+            f.id as fitness_id,
+            f.hours as fitness_hours,
+            f.availability as fitness_availability,
+            f.status_desc as fitness_status_desc,
+
+            p.id as pool_id,
+            p.hours as pool_hours,
+            p.availability as pool_availability,
+            p.status_desc as pool_status_desc,
+
+            s.id as spa_id,
+            s.hours as spa_hours,
+            s.availability as spa_availability,
+            s.status_desc as spa_status_desc
+
+        from reservation_tb as re
+            left join user_tb as u
+                on re.user_id = u.id
+            left join room_tb as r
+                on re.room_id = r.id
+            left join room_type_tb as rt
+            	on r.room_type_id = rt.id
+            left join dining_tb as d
+                on re.dining_id = d.id
+            left join fitness_tb as f
+                on re.fitness_id = f.id
+            left join pool_tb as p
+                on re.pool_id = p.id
+            left join spa_tb as s
+                on re.spa_id = s.id
+
+        where
+            user_id = #{userId}
+            order by start_date desc 
+            <!-- and
+            start_date >= curdate() -->
+    </select>
+
+	
+	<insert id="insertReserveRoom">
+		INSERT INTO reservation_tb (total_price, start_date, end_date, number_of_p, user_id, room_id, dining_id, fitness_id, pool_id, spa_id, pay_tid)
+		VALUES
+		(#{totalPrice}, #{startDate}, #{endDate}, #{numberOfP}, #{userId}, #{roomId}, #{diningId}, #{fitnessId}, #{poolId}, #{spaId}, #{tid})
+	</insert>
+	
+	 <select id="findReservationById" resultMap="Reservation">
+        select
+            re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			re.created_at as r_created_at,
+			re.total_price as r_total_price,
+			re.pay_tid as r_pay_tid,
+			
+            u.id as user_id,
+            u.name as user_name
+            from reservation_tb as re
+                left join user_tb as u
+                    on re.user_id = u.id
+                left join room_tb as r
+                    on re.room_id = r.id
+                left join dining_tb as d
+                    on re.dining_id = d.id
+                left join fitness_tb as f
+                    on re.fitness_id = f.id
+                left join pool_tb as p
+                    on re.pool_id = p.id
+                left join spa_tb as s
+                    on re.spa_id = s.id
+            where re.id = #{id}
+    </select>
+
+    <update id="updateReservation">
+        update
+            reservation_tb
+        set
+            start_date = #{startDate},
+            end_date = #{endDate},
+            number_of_p = #{numberOfp},
+            room_id = #{roomId},
+            dining_id = #{diningId},
+            fitness_id = #{fitnessId},
+            pool_id = #{poolId},
+            spa_id = #{spaId}
+        where
+            id = #{id};
+    </update>
+    <delete id="deleteReservation">
+        delete from reservation_tb
+        where id = #{id};
+    </delete>
+
+
+
+	<!-- writer: 이현서 -->
+	<resultMap id="DiningReservation" type="com.dodam.hotel.repository.model.DiningReservation">
+		<id property="id" column="r_id" />
+		<result property="startDate" column="r_start_date" />
+		<result property="endDate" column="r_end_date" />
+		<result property="numberOfP" column="r_number_of_p" />
+		<association property="user" resultMap="User" />
+		<association property="dining" resultMap="Dining" />
+	</resultMap>
+	
+	<!-- writer: 이현서 -->
+	<!-- 날짜 선택 조회 -->
+	<select id="findDiningReservation" resultMap="DiningReservation">
+		select
+			re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			u.id as user_id,
+			u.name as user_name,
+			u.tel as user_tel,
+			d.id as dining_id,
+			d.name as dining_name,
+			d.location as dining_location,
+			d.availability as dining_availability,
+			d.status_desc as dining_status_desc
+		from reservation_tb as re
+		left join dining_tb as d
+		    on re.dining_id = d.id
+		left join user_tb as u
+			on re.user_id = u.id
+		where re.dining_id is not null and re.start_date=#{date}
+	</select>
+	
+	<!-- 다이닝 전체 예약 조회 -->
+	<select id="findAllDining" resultMap="DiningReservation">
+		select
+			re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			u.id as user_id,
+			u.name as user_name,
+			u.tel as user_tel,
+			d.id as dining_id,
+			d.name as dining_name,
+			d.location as dining_location,
+			d.availability as dining_availability,
+			d.status_desc as dining_status_desc
+		from reservation_tb as re
+		left join dining_tb as d
+		    on re.dining_id = d.id
+		left join user_tb as u
+			on re.user_id = u.id
+		where re.dining_id is not null
+		order by start_date desc
+	</select>
+	
+	<!-- 다이닝 오늘 예약 조회 -->
+	<select id="findTodayDining" resultMap="DiningReservation">
+		select
+			re.id as r_id,
+			re.start_date as r_start_date,
+			re.end_date as r_end_date,
+			re.number_of_p as r_number_of_p,
+			u.id as user_id,
+			u.name as user_name,
+			u.tel as user_tel,
+			d.id as dining_id,
+			d.name as dining_name,
+			d.location as dining_location,
+			d.availability as dining_availability,
+			d.status_desc as dining_status_desc
+		from reservation_tb as re
+		left join dining_tb as d
+		    on re.dining_id = d.id
+		left join user_tb as u
+			on re.user_id = u.id
+		where re.dining_id is not null and date_format(start_date, "%Y-%m-%d") = CURDATE()
+		order by start_date desc
+	</select>
+	
+	
+	<!-- 오늘 매출 금액 조회 -->
+	<select id="findTodayTotalPrice" resultType="Integer">
+		select sum(total_price)
+		from reservation_tb
+		where date_format(start_date, "%Y-%m-%d") = CURDATE()
+	</select>
+	
+	<!-- 이전 매출 금액 조회 -->
+	<select id="findBeforeTotalPrice" resultType="Integer">
+		select sum(total_price) 
+		from reservation_tb
+		where date_format(start_date, "%Y-%m-%d") = CURDATE() - INTERVAL #{count} DAY;
+	</select>
+
+	<delete id="deleteDiningByReservationId">
+		delete from reservation_tb where id = #{reservationId};
+	</delete>
+
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.DiningRepository">
+
+	<resultMap type="com.dodam.hotel.repository.model.Dining"
+		id="Dining">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="hours" property="hours" />
+		<result column="location" property="location" />
+		<result column="availability" property="availability" />
+		<result column="statusDesc" property="statusDesc" />
+		<result column="image1" property="image1" />
+		<result column="image2" property="image2" />
+		<result column="image3" property="image3" />
+	</resultMap>
+
+	<resultMap type="com.dodam.hotel.repository.model.DiningDesc"
+		id="DiningDesc">
+		<result column="id" property="id" />
+		<result column="title_desc" property="titleDesc" />
+		<result column="content_desc1" property="contentDesc1" />
+		<result column="content_desc2" property="contentDesc2" />
+		<result column="content_desc3" property="contentDesc3" />
+		<result column="content_desc4" property="contentDesc4" />
+		<association property="dining" resultMap="Dining"></association>
+	</resultMap>
+
+	<select id="findByTypeAllDining" resultMap="DiningDesc">
+		<if test="type=='All'">
+			select *
+			from dining_desc_tb as dd
+			inner join dining_tb as d
+			on dd.dining_id = d.id
+		</if>
+		<if test="type=='레스토랑'">
+			select *
+			from dining_desc_tb as dd
+			inner join dining_tb as d
+			on dd.dining_id = d.id
+			where dd.id = 1
+		</if>
+		<if test="type=='라운지'">
+			select *
+			from dining_desc_tb as dd
+			inner join dining_tb as d
+			on dd.dining_id = d.id
+			where dd.id = 2
+		</if>
+	</select>
+
+	<select id="findAllDining"
+		resultType="com.dodam.hotel.repository.model.Dining">
+		select * from dining_tb;
+	</select>
+	
+	<select id="findDiningById"
+		resultType="com.dodam.hotel.repository.model.Dining">
+		select * from dining_tb
+		where id = #{id};
+	</select>
+
+	<!-- 레스토랑 상태 -->
+	<select id="findStatusRestaurant" resultType="int">
+		select availability from dining_tb
+		where id = 1;
+	</select>
+
+	<!-- 라운지&바 상태 -->
+	<select id="findStatusBar" resultType="int">
+		select availability from dining_tb
+		where id = 2;
+	</select>
+
+	<update id="updateDiningStatus">
+		update dining_tb
+		set availability = #{availability},
+		    status_desc = #{description}
+		where name = #{name}
+	</update>
+</mapper>

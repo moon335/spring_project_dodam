@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.EventRepository">
+
+	<insert id="insert">
+		insert into
+		event_tb(start_date,end_date,title,content,upload_file,origin_file)
+		values(#{startDate},#{endDate},#{title},#{content},#{uploadFile},#{originFile});
+	</insert>
+
+	<select id="findByAll"
+		resultType="com.dodam.hotel.repository.model.Event">
+		select * from event_tb
+		order by start_date;
+	</select>
+	
+	<select id="findNowEventByPage" resultType="com.dodam.hotel.repository.model.Event">
+		SELECT * from (
+	 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+	        FROM
+	        (SELECT * 
+	         FROM event_tb
+	         WHERE end_date <![CDATA[>=]]> now() 
+	         ORDER BY id DESC) A, 
+	        (SELECT @ROWNUM := 0 ) B
+	        ) as C
+	    where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+	
+	<select id="findNowEvent" resultType="com.dodam.hotel.repository.model.Event">
+	         SELECT * 
+	         FROM event_tb
+	         WHERE end_date <![CDATA[>=]]> now()
+	         ORDER BY id DESC 
+	</select>
+	
+	<select id="findByPrevEventPage" resultType="com.dodam.hotel.repository.model.Event">
+		SELECT * from (
+	 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+	        FROM
+	        (SELECT * 
+	         FROM event_tb
+	         WHERE end_date <![CDATA[<]]> now()
+	         ORDER BY id DESC) A, 
+	        (SELECT @ROWNUM := 0 ) B
+	        ) as C
+	    where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+	
+	<select id="findByNowAll" resultType="Integer">
+		select count(*) from event_tb WHERE end_date <![CDATA[>=]]> now()
+	</select>
+	
+	<select id="findByPrevAll" resultType="Integer">
+		select count(*) from event_tb WHERE end_date <![CDATA[<]]> now()
+	</select>
+	
+	
+	<select id="findLimit5" resultType="com.dodam.hotel.repository.model.Event">
+		select title, start_date
+		from event_tb
+		order by id desc
+		limit 5;
+	</select>
+	
+	<select id="findByAllPage" resultType="com.dodam.hotel.repository.model.Event">
+		SELECT * from (
+	 		SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+	        FROM
+	        (SELECT * FROM event_tb ORDER BY id DESC) A, 
+	        (SELECT @ROWNUM := 0 ) B
+	        ) as C
+	    where C.ROWNUM BETWEEN #{start} AND #{end};
+	</select>
+	
+	<select id="count" resultType="Integer">
+		select count(*) from event_tb
+	</select>
+
+	<select id="findById"
+		resultType="com.dodam.hotel.repository.model.Event">
+		select * from event_tb
+		where id= #{id};
+	</select>
+
+	<update id="updateEvent">
+		update event_tb
+		set start_date = #{startDate},
+		end_date = #{endDate}, title = #{title}, content = #{content}
+		where id
+		= #{id};
+	</update>
+
+	<delete id="deleteById">
+		delete from event_tb where id = #{id};
+	</delete>
+
+
+
+
+
+
+</mapper>

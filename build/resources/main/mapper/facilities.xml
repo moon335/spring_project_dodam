@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.FacilitiesRepository">
+	<!-- 수영장 -->
+	<resultMap type="com.dodam.hotel.repository.model.Pool"
+		id="Pool">
+		<result column="id" property="id" />
+		<result column="availability" property="availability" />
+		<result column="price" property="price" />
+		<result column="hours" property="hours" />
+		<result column="status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc"
+			resultMap="FacilitiesDesc" />
+	</resultMap>
+
+	<!-- 스파 -->
+	<resultMap type="com.dodam.hotel.repository.model.Spa"
+		id="Spa">
+		<result column="id" property="id" />
+		<result column="availability" property="availability" />
+		<result column="price" property="price" />
+		<result column="hours" property="hours" />
+		<result column="status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc"
+			resultMap="FacilitiesDesc" />
+	</resultMap>
+
+	<!-- 피트니스 -->
+	<resultMap type="com.dodam.hotel.repository.model.Fitness"
+		id="Fitness">
+		<result column="id" property="id" />
+		<result column="availability" property="availability" />
+		<result column="price" property="price" />
+		<result column="hours" property="hours" />
+		<result column="status_desc" property="statusDesc" />
+		<association property="facilities" resultMap="Facilities"></association>
+		<association property="facilitiesDesc"
+			resultMap="FacilitiesDesc" />
+	</resultMap>
+
+
+	<resultMap type="com.dodam.hotel.repository.model.Facilities"
+		id="Facilities">
+		<result column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="location" property="location" />
+		<result column="image1" property="image1" />
+		<result column="image2" property="image2" />
+		<result column="image3" property="image3" />
+	</resultMap>
+
+	<resultMap
+		type="com.dodam.hotel.repository.model.FacilitiesDesc"
+		id="FacilitiesDesc">
+		<result column="id" property="id" />
+		<result column="title_desc" property="titleDesc" />
+		<result column="content_desc1" property="contentDesc1" />
+		<result column="content_desc2" property="contentDesc2" />
+		<result column="content_desc3" property="contentDesc3" />
+		<result column="content_desc4" property="contentDesc4" />
+		<result column="content_desc5" property="contentDesc5" />
+		<result column="content_desc6" property="contentDesc6" />
+		<result column="content_desc7" property="contentDesc7" />
+		<result column="content_desc8" property="contentDesc8" />
+		<result column="content_desc9" property="contentDesc9" />
+		<result column="content_desc10" property="contentDesc10" />
+		<association property="facilities" resultMap="Facilities"></association>
+	</resultMap>
+
+	<!-- 수영장 조회 -->
+	<select id="findPool" resultMap="Pool">
+		SELECT *
+		FROM pool_tb as p
+		JOIN
+		facilities_tb as f
+		ON p.facilities_id = f.id
+		JOIN facilities_desc_tb as
+		d
+		ON d.facilities_id = f.id;
+	</select>
+
+	<!-- 스파 조회 -->
+	<select id="findSpa" resultMap="Spa">
+		SELECT *
+		FROM spa_tb as s
+		JOIN
+		facilities_tb as f
+		ON s.facilities_id = f.id
+		JOIN facilities_desc_tb as
+		d
+		ON d.facilities_id = f.id;
+	</select>
+
+	<!-- 피트니스 조회 -->
+	<select id="findFitness" resultMap="Fitness">
+		SELECT *
+		FROM fitness_tb as
+		fit
+		JOIN facilities_tb as f
+		ON fit.facilities_id = f.id
+		JOIN
+		facilities_desc_tb as d
+		ON d.facilities_id = f.id;
+	</select>
+
+	<select id="findAllFitness"
+		resultType="com.dodam.hotel.repository.model.Fitness">
+		select * from fitness_tb;
+	</select>
+
+	<select id="findAllPool"
+		resultType="com.dodam.hotel.repository.model.Pool">
+		select * from pool_tb;
+	</select>
+
+	<select id="findAllSpa"
+		resultType="com.dodam.hotel.repository.model.Spa">
+		select * from spa_tb;
+	</select>
+
+
+	<select id="findByAllFitness"
+		resultType="com.dodam.hotel.repository.model.Fitness">
+		select * from fitness_tb;
+	</select>
+
+	<select id="findByAllPool"
+		resultType="com.dodam.hotel.repository.model.Pool">
+		select * from pool_tb;
+	</select>
+
+	<select id="findByAllSpa"
+		resultType="com.dodam.hotel.repository.model.Spa">
+		select * from spa_tb;
+	</select>
+
+
+	<!-- 부대시설 상태 조회 -->
+	<select id="findPoolStatus" resultType="int">
+		select availability from pool_tb;
+	</select>
+	<select id="findSpaStatus" resultType="int">
+		select availability from spa_tb;
+	</select>
+	<select id="findFitnessStatus" resultType="int">
+		select availability from fitness_tb;
+	</select>
+
+	<!-- 부대시설 전체 조회 -->
+	<select id="findAllFacilities"
+		resultType="com.dodam.hotel.repository.model.AllFacilities">
+		select *
+		from facilities_tb as fac
+		left join pool_tb as p
+		on fac.id = p.facilities_id
+		left join spa_tb as s
+		on fac.id = s.facilities_id
+		left join fitness_tb as f
+		on fac.id = f.facilities_id;
+	</select>
+	
+	
+</mapper>

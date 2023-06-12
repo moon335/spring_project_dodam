@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dodam.hotel.repository.interfaces.GradeRepository">
+	
+	<!-- 회원가입 시 등급 insert -->
+	<insert id="insertGrade">
+		INSERT INTO grade_info_tb (user_id)
+		VALUES (#{userId})
+	</insert>
+	
+	<resultMap type="com.dodam.hotel.repository.model.GradeInfo" id="GradeInfo">
+		<result column="updated_at" property="updatedAt"/>
+		<collection property="user" resultMap="User"></collection>
+		<collection property="grade" resultMap="Grade"></collection>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.User" id="User">
+		<result column="id" property="id"/>
+		<result column="email" property="email"/>
+		<result column="password" property="password"/>
+		<result column="user_name" property="name"/>
+		<result column="gender" property="gender"/>
+		<result column="birth" property="birth"/>
+		<result column="tel" property="tel"/>
+		<result column="blacklist" property="blacklist"/>
+		<result column="withdrawal" property="withdrawal"/>
+		<result column="created_at" property="createdAt"/>
+	</resultMap>
+	
+	<resultMap type="com.dodam.hotel.repository.model.Grade" id="Grade">
+		<result column="grade_id" property="id"/>
+		<result column="grade_name" property="name"/>
+		<result column="description" property="description"/>
+	</resultMap>
+	
+	<!-- myPage 회원 등급 조회하는 용도 -->
+	<select id="findGradeByUserId" resultMap="GradeInfo">
+		select
+		    g.name as grade_name,
+		    g.description as description,
+		    u.name as user_name,
+		    u.tel as tel,
+		    g.id as grade_id
+		from grade_info_tb as gi
+		inner join user_tb as u
+		on gi.user_id = u.id
+		inner join grade_tb as g
+		on gi.grade_id = g.id
+		where user_id = #{userId}
+	</select>
+	
+	<update id="updateUserGrade">
+		update grade_info_tb
+		set grade_id = #{gradeId.grade}
+		where user_id = #{userId}
+	</update>
+	
+	<select id="findAllGrade" resultType="com.dodam.hotel.repository.model.Grade">
+		select * from grade_tb
+	</select>
+</mapper>

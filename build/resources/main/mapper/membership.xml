@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.MembershipRepository">
+	<!-- 멤버쉽 -->
+	<resultMap type="com.dodam.hotel.repository.model.Membership" id="Membership">
+		<result column="id" property="id" />
+		<result column="price" property="price" />
+	</resultMap>
+
+	<!-- membership info -->
+	<resultMap type="com.dodam.hotel.repository.model.MembershipInfo" id="MembershipInfo">
+		<result column="updated_at" property="updatedAt" />
+		<association property="user" resultMap="User"></association>
+		<association property="membership" resultMap="Membership"></association>
+	</resultMap>
+	
+	<!-- 오늘 멤버쉽 가입 회원 조회 -->
+	<select id="findMembershipToday" resultType="com.dodam.hotel.repository.model.MembershipInfo">
+		select * from membership_info_tb
+		where date_format(updated_at, "%Y-%m-%d") = curdate();
+	</select>
+
+	<!-- 멤버쉽 유저 검색 중복 방지 -->
+	<select id="findMembershipByuserId" resultType="com.dodam.hotel.repository.model.MembershipInfo">
+		select * from membership_info_tb
+		where user_id = #{userId}
+	</select>
+	<!-- 멤버쉽 등록 -->
+	<insert id="insert">
+		INSERT INTO membership_info_tb (user_id)
+		VALUES (#{userId})
+	</insert>
+	
+	<!-- 멤버쉽 삭제 -->
+	<delete id="delete">
+		DELETE FROM membership_tb where user_id = #{userId}
+	</delete>
+	
+	<!-- 멤버쉽 정보 조회 -->
+	<select id="findMembership" resultType="com.dodam.hotel.repository.model.Membership">
+		select * from membership_tb
+	</select>
+	
+</mapper>

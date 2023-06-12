@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.dodam.hotel.repository.interfaces.RoomRepository">
+	<resultMap id="Room"
+		type="com.dodam.hotel.repository.model.Room">
+		<result column="room_id" property="id" />
+		<result column="room_availability" property="availability" />
+		<result column="room_status_desc" property="statusDesc" />
+		<collection property="roomType" resultMap="RoomType"></collection>
+	</resultMap>
+
+	<resultMap type="com.dodam.hotel.repository.model.RoomType"
+		id="RoomType">
+		<result column="room_type_id" property="id" />
+		<result column="room_type_name" property="name" />
+		<result column="room_type_price" property="price" />
+		<result column="room_type_description" property="description" />
+		<result column="room_type_image" property="image" />
+		<result column="room_type_image2" property="image2" />
+		<result column="room_type_image3" property="image3" />
+		<result column="room_type_number_of_p" property="numberOfP" />
+	</resultMap>
+
+	<select id="findAllRoom"
+		resultType="com.dodam.hotel.repository.model.RoomType">
+		<if test="type=='All'">
+			select *
+			from room_type_tb
+		</if>
+		<if test="type=='AllInOne'">
+			select *
+			from room_type_tb
+		</if>
+		<if test="type=='디럭스'">
+			select *
+			from room_type_tb
+			where name like #{name}
+		</if>
+		<if test="type=='프리미엄'">
+			select *
+			from room_type_tb
+			where name like #{name}
+		</if>
+		<if test="type=='스위트'">
+			select *
+			from room_type_tb
+			where name like #{name}
+		</if>
+	</select>
+
+	<select id="findRoomById"
+		resultType="com.dodam.hotel.repository.model.RoomType">
+		select *
+		from room_type_tb
+		where id = #{id}
+	</select>
+
+	<!-- 예약 가능 객실 조회 -->
+	<select id="findRoombyDate" resultMap="Room">
+		select r.id as room_id, rt.name as room_type_name, rt.price as room_type_price, rt.image as room_type_image, rt.image as room_type_image2, rt.image as room_type_image3 
+		from (select * 
+			from room_tb
+            where availability = 1
+            ) as r
+		left join room_type_tb as rt
+		on r.room_type_id = rt.id
+		where not (r.id IN(
+		select room_id
+		from reservation_tb
+		where
+		start_date <![CDATA[ <= ]]>
+		#{startDate} and #{startDate} <![CDATA[ < ]]>
+		end_date
+		or
+		start_date <![CDATA[ < ]]>
+		#{endDate} and #{endDate} <![CDATA[ <= ]]>
+		end_date
+		)) and rt.number_of_p <![CDATA[ >= ]]>
+		#{numberOfP}
+	</select>
+	<!-- writer: 이현서 -->
+	<!-- private String name; private Integer price; private Boolean availability; 
+		private String description; private String image; private String status_desc; 
+		private Integer number_of_p; -->
+
+
+   <select id="findAllRoomList" resultMap="Room">
+        select 
+        	r.id as room_id,
+        	r.availability as room_availability,
+        	r.status_desc as room_status_desc,
+        	r.room_type_id as room_room_type_id,
+        	rt.id as room_type_id,
+        	rt.name as room_type_name,
+        	rt.price as room_type_price,
+        	rt.description as room_type_description,
+        	rt.image as room_type_image,
+        	rt.image2 as room_type_image2,
+        	rt.image3 as room_type_image3,
+        	rt.number_of_p as room_type_number_of_p
+       
+        from room_tb as r
+        	join room_type_tb as rt
+        	on r.room_type_id = rt.id;
+    </select>
+    
+   <select id="findAllRoomListPaging" resultMap="Room">
+        	SELECT * 
+		from (
+ 			SELECT @ROWNUM := @ROWNUM + 1 AS ROWNUM, A.* 
+        	FROM (
+				select 
+	        	r.id as room_id,
+	        	r.availability as room_availability,
+	        	r.status_desc as room_status_desc,
+	        	r.room_type_id as room_room_type_id,
+	        	rt.id as room_type_id,
+	        	rt.name as room_type_name,
+	        	rt.price as room_type_price,
+	        	rt.description as room_type_description,
+	        	rt.image as room_type_image,
+	        	rt.image2 as room_type_image2,
+	        	rt.image3 as room_type_image3,
+	        	rt.number_of_p as room_type_number_of_p
+       
+	     	    from room_tb as r
+	        	join room_type_tb as rt
+	        	on r.room_type_id = rt.id
+        	    ORDER BY r.id DESC
+     	       ) A, 
+        		(SELECT @ROWNUM := 0 ) B
+        	) as C
+		WHERE C.ROWNUM BETWEEN #{start} AND #{end}
+    </select>
+    
+    <select id="findAllRoomListCount" resultType="int">
+    	select count(*)
+    	from room_tb
+    </select>
+    
+    <select id="findById" resultMap="Room">
+        select 
+      		r.id as room_id,
+        	r.availability as room_availability,
+        	r.status_desc as room_status_desc,
+        	r.room_type_id as room_room_type_id,
+        	rt.id as room_type_id,
+        	rt.name as room_type_name,
+        	rt.price as room_type_price,
+        	rt.description as room_type_description,
+        	rt.image as room_type_image,
+        	rt.image2 as room_type_image2,
+        	rt.image3 as room_type_image3,
+        	rt.number_of_p as room_type_number_of_p
+        from room_tb as r
+        	join room_type_tb as rt
+        	on r.room_type_id = rt.id
+        where r.id = #{roomId};
+    </select>
+
+    <select id="findOptionSearchOneRoomList" resultMap="Room">
+        select
+        	r.id as room_id,
+        	r.availability as room_availability,
+        	r.status_desc as room_status_desc,
+        	r.room_type_id as room_room_type_id,
+        	rt.id as room_type_id,
+        	rt.name as room_type_name,
+        	rt.price as room_type_price,
+        	rt.description as room_type_description,
+        	rt.image as room_type_image,
+        	rt.image2 as room_type_image2,
+        	rt.image3 as room_type_image3,
+        	rt.number_of_p as room_type_number_of_p
+        from room_tb as r
+        	join room_type_tb as rt
+        	on r.room_type_id = rt.id
+        where 
+        	r.availability = #{roomStatus}
+            or rt.number_of_p >= #{numberOfP}
+           	or rt.price >= #{price};
+	</select>
+
+	<!-- writer: 이현서 hotfix -->
+    <select id="findOptionStatusAndNumberOfpRoomList" resultMap="Room">
+        select
+			r.id as room_id,
+			r.availability as room_availability,
+			r.status_desc as room_status_desc,
+			r.room_type_id as room_room_type_id,
+			rt.id as room_type_id,
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.description as room_type_description,
+			rt.image as room_type_image,
+			rt.image2 as room_type_image2,
+			rt.image3 as room_type_image3,
+			rt.number_of_p as room_type_number_of_p
+		from room_tb as r
+			join room_type_tb as rt
+			on r.room_type_id = rt.id
+        where
+            r.availability = #{roomStatus}
+          	and rt.number_of_p >= #{numberOfP};
+    </select>
+    <select id="findOptionStatusAndPriceRoomList" resultMap="Room">
+		select
+			r.id as room_id,
+			r.availability as room_availability,
+			r.status_desc as room_status_desc,
+			r.room_type_id as room_room_type_id,
+			rt.id as room_type_id,
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.description as room_type_description,
+			rt.image as room_type_image,
+			rt.image2 as room_type_image2,
+			rt.image3 as room_type_image3,
+			rt.number_of_p as room_type_number_of_p
+		from room_tb as r
+			join room_type_tb as rt
+			on r.room_type_id = rt.id
+        where
+            r.availability = #{roomStatus}
+          	and rt.price >= #{price};
+    </select>
+    <select id="findOptionNumberOfpAndPriceRoomList" resultMap="Room">
+		select
+			r.id as room_id,
+			r.availability as room_availability,
+			r.status_desc as room_status_desc,
+			r.room_type_id as room_room_type_id,
+			rt.id as room_type_id,
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.description as room_type_description,
+			rt.image as room_type_image,
+			rt.image2 as room_type_image2,
+			rt.image3 as room_type_image3,
+			rt.number_of_p as room_type_number_of_p
+		from room_tb as r
+			join room_type_tb as rt
+			on r.room_type_id = rt.id
+        where
+            rt.number_of_p >= #{numberOfP}
+          	and rt.price >= #{price};
+    </select>
+    <select id="findAllOptionRoomList" resultMap="Room">
+		select
+			r.id as room_id,
+			r.availability as room_availability,
+			r.status_desc as room_status_desc,
+			rt.id as room_type_id,
+			rt.name as room_type_name,
+			rt.price as room_type_price,
+			rt.description as room_type_description,
+			rt.image as room_type_image,
+			rt.image2 as room_type_image2,
+			rt.image3 as room_type_image3,
+			rt.number_of_p as room_type_number_of_p
+		from room_tb as r
+			join room_type_tb as rt
+			on r.room_type_id = rt.id
+        where
+            r.availability = #{roomStatus}
+          	and rt.number_of_p >= #{numberOfP}
+          	and rt.price >= #{price};
+    </select>
+
+
+	<update id="updateManagerRoom">
+		update room_tb set 
+		availability = #{availability},
+		status_desc = #{statusDesc}
+		where id = #{id};
+	</update>
+	
+	<!-- 매니저 메인 사용 가능 객실 개수 조회 -->
+	<select id="findRoomByCount1" resultType="int">
+		select count(*) from room_tb
+		where availability = 1;
+	</select>
+	
+	<!-- 매니저 메인 사용 불가 객실 개수 조회 -->
+	<select id="findRoomByCount0" resultType="int">
+		select count(*) from room_tb
+		where availability = 0;
+	</select>
+</mapper>
